@@ -8,7 +8,7 @@
 
 <img src="figures/uniocc_overview.png" alt="Alt Text" style="width:80%; height:auto;">
 
-> Autonomous Driving researchers, have you ever bothered by the fact that popular datasets all have their different
+> Autonomous Driving researchers, have you ever been bothered by the fact that popular datasets all have their different
 > formats and standardizing them is a pain? Have you ever been frustrated by the difficulty to just understand
 > the file semantics? This challenge is even worse in the occupancy domain. But, **UniOcc is here to help.**
 
