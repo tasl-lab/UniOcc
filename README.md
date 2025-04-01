@@ -1,6 +1,6 @@
 # **UniOcc**: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving
 
-[Paper](https://arxiv.org/XXXX.XXXXX) | [HuggingFace](https://huggingface.co/datasets/tasl-lab/uniocc)
+[Paper](https://arxiv.org/abs/2503.24381) | [HuggingFace](https://huggingface.co/datasets/tasl-lab/uniocc)
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Stars](https://img.shields.io/github.com/tasl-lab/UniOcc/stars)
@@ -223,3 +223,19 @@ dataset = torch.utils.data.ConcatDataset([dataset_carla_mini, dataset_nusc_mini,
 - [x] Release the visualization script
 - [ ] Release the evaluation scripts
 - [ ] Release data generation scripts
+
+
+---
+## Citation
+
+If you find this work useful, please consider citing our paper:
+
+```bibtex
+@article{wang2025unioccunifiedbenchmarkoccupancy,
+  title={UniOcc: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving},
+  author={Yuping Wang and Xiangyu Huang and Xiaokang Sun and Mingxuan Yan and Shuo Xing and Zhengzhong Tu and Jiachen Li},
+  journal={arXiv preprint arXiv:2406.09246},
+  year={2025},
+  url={https://arxiv.org/abs/2503.24381}, 
+}
+```
