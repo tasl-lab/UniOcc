@@ -1,14 +1,9 @@
 # **UniOcc**: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving
-
-[Paper](https://arxiv.org/abs/2503.24381) | [HuggingFace](https://huggingface.co/datasets/tasl-lab/uniocc)
-
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Stars](https://img.shields.io/github.com/tasl-lab/UniOcc/stars)
-![HuggingFace](https://img.shields.io/huggingface/datasets/tasl-lab/uniocc)
+[![arXiv](https://img.shields.io/badge/arXiv-2503.24381-<COLOR>.svg)](https://arxiv.org/abs/2503.24381)
+[![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/tasl-lab/uniocc)
 
-<img src="figures/uniocc_overview.png" alt="Alt Text" style="width:80%; height:auto;">
-
-> Autonomous Driving researchers, have you ever bothered by the fact that popular datasets all have their different
+> Autonomous Driving researchers, have you ever been bothered by the fact that popular datasets all have their different
 > formats and standardizing them is a pain? Have you ever been frustrated by the difficulty to just understand
 > the file semantics? This challenge is even worse in the occupancy domain. But, **UniOcc is here to help.**
 
