@@ -215,13 +215,37 @@ dataset = torch.utils.data.ConcatDataset([dataset_carla_mini, dataset_nusc_mini,
 ```
 ---
 
+## 📏 Evaluation 
+
+Additional dependencies:
+```shell
+pip install shapely matplotlib scikit-learn pickle
+```
+
+Demo (needs a sample dataset in `datasets/`):
+```shell
+python eval.py
+```
+
+We provide these evaluation APIs, as described in our paper.
+
+
+| Function | Description                                                                                                                                                         |
+|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FindGMMForCategory` | Fits the best Gaussian-Mixture Model (GMM) to all length-width-height triples of a chosen class, creating a “realism” prior for that object category.               |
+| `ComputeObjectLikelihoods` | Segments each object in a binary occupancy grid and scores its bounding-box dimensions against the pretrained GMM, returning plausibility probabilities and counts. |
+| `ComputeTemporalShapeConsistency` | Tracks every object across frames using voxel flows, aligns shapes, and reports the mean IoU of consecutive shapes, higher = smoother temporal geometry.            |
+| `ComputeStaticConsistency` | Warps static voxels from frame *t* to *t + 1* via ego motion and measures how well they overlap, giving an IoU-style score for background stability.                |
+| `ComputeIoU` | Computes the standard intersection-over-union between two mono-label occupancy grids while ignoring a specified “free-space” label.                                 |
+| `ComputeIoUForCategory` | Same as `ComputeIoU`, but restricted to voxels of a single semantic class, enabling per-category performance evaluation.                                            |
+
 ## Checklist
 
 - [x] Release non-cooperative datasets
 - [ ] Release cooperative dataset
 - [x] Release the dataset API
 - [x] Release the visualization script
-- [ ] Release the evaluation scripts
+- [x] Release the evaluation scripts
 - [ ] Release data generation scripts
 
 
