@@ -72,8 +72,9 @@ The UniOcc dataset is available on HuggingFace. The size of each dataset is as f
 | Carla-10Hz-mini                      |                2 |              4,200 |       5.0 |
 | Carla-10Hz-val                       |                4 |             12,500 |      15.0 |   
 | Carla-10Hz-train                     |               11 |             42,200 |      46.5 | 
-| OpenCOOD-via-OPV2V-10Hz-val          |   To Be Released |                    |           |  
-| OpenCOOD-via-OPV2V-10Hz-train        |   To Be Released |                    |           |
+| OPV2V-10Hz-val          |   9 |                  8035  |       23.5    |  
+| OPV2V-10Hz-train        |   43 |              18676      |       49.8    |
+| OPV2V-10Hz-test         |   16 |              3629      |       9.6    |
 
 
 To download each dataset, use the following command (recommend you to download only the folders you need):
@@ -237,7 +238,7 @@ We provide these evaluation APIs, as described in our paper.
 ## Checklist
 
 - [x] Release non-cooperative datasets
-- [ ] Release cooperative dataset
+- [x] Release cooperative dataset
 - [x] Release the dataset API
 - [x] Release the visualization script
 - [x] Release the evaluation scripts
