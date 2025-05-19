@@ -3,6 +3,8 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2503.24381-<COLOR>.svg)](https://arxiv.org/abs/2503.24381)
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/tasl-lab/uniocc)
 
+Alternative: [![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?logo=googledrive&logoColor=fff)](https://drive.google.com/drive/folders/18TSklDPPW1IwXvfTb6DtSNLhVud5-8Pw?usp=sharing)
+
 > Autonomous Driving researchers, have you ever been bothered by the fact that popular datasets all have their different
 > formats and standardizing them is a pain? Have you ever been frustrated by the difficulty to just understand
 > the file semantics? This challenge is even worse in the occupancy domain. But, **UniOcc is here to help.**
