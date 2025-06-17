@@ -253,11 +253,10 @@ We provide these evaluation APIs, as described in our paper.
 If you find this work useful, please consider citing our paper:
 
 ```bibtex
-@article{wang2025unioccunifiedbenchmarkoccupancy,
-  title={UniOcc: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving},
-  author={Yuping Wang and Xiangyu Huang and Xiaokang Sun and Mingxuan Yan and Shuo Xing and Zhengzhong Tu and Jiachen Li},
-  journal={arXiv preprint arXiv:2406.09246},
-  year={2025},
-  url={https://arxiv.org/abs/2503.24381}, 
+@article{wang2025uniocc,
+  title={Uniocc: A unified benchmark for occupancy forecasting and prediction in autonomous driving},
+  author={Wang, Yuping and Huang, Xiangyu and Sun, Xiaokang and Yan, Mingxuan and Xing, Shuo and Tu, Zhengzhong and Li, Jiachen},
+  journal={arXiv preprint arXiv:2503.24381},
+  year={2025}
 }
 ```
