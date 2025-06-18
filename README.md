@@ -14,6 +14,14 @@ estimation in autonomous driving. By integrating multiple real-world (nuScenes, 
 synthetic (CARLA, OpenCOOD) datasets, UniOcc enables multi-domain training, seamless cross-dataset evaluation, 
 and robust benchmarking across diverse driving environments.
 
+[Yuping Wang](https://www.linkedin.com/in/yuping-wang-5a7178185/),
+[Xiangyu Huang](https://www.linkedin.com/in/xiangyu-huang-606089292),
+[Xiaokang Sun](https://scholar.google.com/citations?user=2sWnAjQAAAAJ&hl=en),
+[Mingxuan Yan](https://waterhyacinthinnanhu.github.io/),
+[Shuo Xing](https://shuoxing98.github.io/),
+[Zhengzhong Tu](https://vztu.github.io/),
+[Jiachen Li](https://jiachenli94.github.io/)
+
 ---
 
 ## Supported Tasks
