@@ -4,6 +4,7 @@
 [![HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-blue)](https://huggingface.co/datasets/tasl-lab/uniocc)
 
 Alternative: [![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?logo=googledrive&logoColor=fff)](https://drive.google.com/drive/folders/18TSklDPPW1IwXvfTb6DtSNLhVud5-8Pw?usp=sharing)
+[![Baidu](https://img.shields.io/badge/Baidu-Pan-2932E1?logo=Baidu&logoColor=white)](https://pan.baidu.com/s/17Pk2ni8BwwU4T2fRmVROeA?pwd=kdfj)
 
 > Autonomous Driving researchers, have you ever been bothered by the fact that popular datasets all have their different
 > formats and standardizing them is a pain? Have you ever been frustrated by the difficulty to just understand
