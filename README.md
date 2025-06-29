@@ -7,7 +7,7 @@ Alternative: [![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4
 [![Baidu](https://img.shields.io/badge/Baidu-Pan-2932E1?logo=Baidu&logoColor=white)](https://pan.baidu.com/s/17Pk2ni8BwwU4T2fRmVROeA?pwd=kdfj)
 
 > Autonomous Driving researchers, have you ever been bothered by the fact that popular datasets all have their different
-> formats and standardizing them is a pain? Have you ever been frustrated by the difficulty to just understand
+> formats, and standardizing them is a pain? Have you ever been frustrated by the difficulty of just understanding
 > the file semantics? This challenge is even worse in the occupancy domain. But, **UniOcc is here to help.**
 
 **UniOcc** is a unified framework for occupancy forecasting, single-frame occupancy prediction, and occupancy flow 
@@ -15,13 +15,15 @@ estimation in autonomous driving. By integrating multiple real-world (nuScenes, 
 synthetic (CARLA, OpenCOOD) datasets, UniOcc enables multi-domain training, seamless cross-dataset evaluation, 
 and robust benchmarking across diverse driving environments.
 
-[Yuping Wang](https://www.linkedin.com/in/yuping-wang-5a7178185/),
-[Xiangyu Huang](https://www.linkedin.com/in/xiangyu-huang-606089292),
-[Xiaokang Sun](https://scholar.google.com/citations?user=2sWnAjQAAAAJ&hl=en),
-[Mingxuan Yan](https://waterhyacinthinnanhu.github.io/),
-[Shuo Xing](https://shuoxing98.github.io/),
-[Zhengzhong Tu](https://vztu.github.io/),
-[Jiachen Li](https://jiachenli94.github.io/)
+[Yuping Wang<sup>1,2</sup>*](https://www.linkedin.com/in/yuping-wang-5a7178185/),
+[Xiangyu Huang<sup>3</sup>*](https://www.linkedin.com/in/xiangyu-huang-606089292),
+[Xiaokang Sun<sup>1</sup>*](https://scholar.google.com/citations?user=2sWnAjQAAAAJ&hl=en),
+[Mingxuan Yan<sup>1</sup>](https://waterhyacinthinnanhu.github.io/),
+[Shuo Xing<sup>4</sup>](https://shuoxing98.github.io/),
+[Zhengzhong Tu<sup>4</sup>](https://vztu.github.io/),
+[Jiachen Li<sup>1</sup>](https://jiachenli94.github.io/)
+
+<sup>1</sup>University of California, Riverside; <sup>2</sup>University of Michigan; <sup>3</sup>University of Wisconsin-Madison; <sup>4</sup>Texas A&M University
 
 ---
 
