@@ -298,7 +298,7 @@ We provide these evaluation APIs, as described in our paper.
 - [x] Release the visualization script
 - [x] Release the evaluation scripts
 - [x] Release the occupancy segmentation, localization, tracking scripts
-- [ ] Release data generation scripts
+- [x] Release data generation scripts
 
 
 ---

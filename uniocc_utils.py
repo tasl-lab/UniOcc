@@ -16,11 +16,77 @@ from scipy.optimize import linear_sum_assignment
 from scipy.spatial.distance import cdist
 from sklearn.decomposition import PCA
 from scipy.spatial.transform import Rotation as R
+from scipy.spatial import ConvexHull
 
 
 ######################################
 # VOXEL UTILITY AND CONVERSION METHODS
 ######################################
+
+def GetVoxelCoordinates(
+    grid_min: np.ndarray,
+    grid_max: np.ndarray,
+    grid_resolution: float,
+    transform_agent_to_ego: np.ndarray,
+    size: np.ndarray
+) -> tuple[list[np.ndarray], np.ndarray]:
+    """
+    Calculate the voxel coordinates (occ space) occupied by a bounding box in a 3D grid.
+
+    Parameters:
+    - grid_min: np.array of shape (3,), the minimum bound of the grid in world space.
+    - grid_max: np.array of shape (3,), the maximum bound of the grid in world space.
+    - grid_resolution: Float, size of each voxel in real-world units.
+    - transform_agent_to_ego: np.array of shape (4, 4) transformation of the bounding box center.
+    - size: np.array of shape (3,), dimensions of the bounding box along its local axes. l, w, h
+
+    Returns:
+    - voxel_coordinates: [n, 3] np.array of voxel indices occupied by the bounding box
+    """
+    # Step 1: Define the 8 corners of the bounding box in its local frame
+    dx, dy, dz = size / 2.0
+    corners = np.array([
+        [-dx, -dy, -dz], [-dx, -dy, dz], [-dx, dy, -dz], [-dx, dy, dz],
+        [dx, -dy, -dz], [dx, -dy, dz], [dx, dy, -dz], [dx, dy, dz]
+    ])
+
+    # Step 2: Transform corners to ego frame
+    corners_homo = np.concatenate([corners, np.ones((corners.shape[0], 1))], axis=-1)
+    transformed_corners = (transform_agent_to_ego @ corners_homo.T).T
+    transformed_corners = transformed_corners[:, :-1]
+    occ_frame_corners = transformed_corners - grid_min
+
+    # Step 3: Convert world space coordinates to voxel grid indices
+    voxel_corners = np.floor(occ_frame_corners / grid_resolution).astype(int)
+
+    # Step 4: Clip voxel indices to ensure they lie within the grid
+    grid_shape = np.ceil((grid_max - grid_min) / grid_resolution).astype(int)
+    min_corner = np.clip(np.min(voxel_corners, axis=0), 0, grid_shape - 1)
+    max_corner = np.clip(np.max(voxel_corners, axis=0), 0, grid_shape - 1)
+
+    # Step 5: Collect all voxel indices within the bounding box
+    x_range = np.arange(min_corner[0], max_corner[0] + 1)
+    y_range = np.arange(min_corner[1], max_corner[1] + 1)
+    z_range = np.arange(min_corner[2], max_corner[2] + 1)
+
+    h = np.meshgrid(x_range, y_range, z_range, indexing='ij')
+    h = np.array(h).T.reshape(-1, 3)
+
+    # Step 6: Find the convex hull formed by the corners
+    try:
+        hull = ConvexHull(voxel_corners)
+    except:
+        return [], occ_frame_corners
+
+    # Step 7: Find the voxels that lie within the hull
+    interior_points = []
+    for point in h:
+        point_center = point + grid_resolution / 2.0
+        if all([np.dot(eq[:-1], point_center) <= -eq[-1] for eq in hull.equations]):
+            interior_points.append(np.array(point))
+
+    return interior_points, occ_frame_corners
+
 def VoxelToCorners(voxel_coords, resolution):
     """
     Convert voxel indices to 3D bounding-box corner coordinates.
