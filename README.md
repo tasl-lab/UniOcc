@@ -229,7 +229,8 @@ dataset = torch.utils.data.ConcatDataset([dataset_carla_mini, dataset_nusc_mini,
 In `uniocc_utils.py`, we provide a set of utility functions for occupancy space localization, segmentation, voxel alignment, and tracking. These functions are designed to work with the voxelized occupancy grids and can be used for various tasks such as object tracking, segmentation, and motion estimation.
 
 | **Function**                                | **Description**                                                                                                                              |
-| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| ------------------------------------------- |----------------------------------------------------------------------------------------------------------------------------------------------|
+| `GetVoxelCoordinates`                       | Compute the voxel indices in a 3D occupancy grid that are occupied by a transformed bounding box.                                            |
 | `VoxelToCorners`                            | Converts voxel indices to 3D bounding-box corner coordinates for spatial visualization and geometry computations.                            |
 | `OccFrameToEgoFrame` / `EgoFrameToOccFrame` | Transforms voxel coordinates between occupancy grid space and the ego-centric coordinate frame using voxel resolution and ego center offset. |
 | `AlignToCentroid`                           | Recenters voxel coordinates by subtracting their centroid, aligning the shape around the origin.                                             |
