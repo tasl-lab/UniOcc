@@ -1,5 +1,9 @@
 # Copyright (c) 2025. All rights reserved.
 # Licensed under the MIT License.
+#
+# This script contains the visualization utilities for UniOcc.
+# Note: when the open3d window shows, move your mouse around,
+# press p to save camera location.
 
 import open3d as o3d
 import numpy as np
@@ -26,12 +30,20 @@ COLOR_MAP = np.array([
     [230, 230, 250, 255],   # 9 building        white
     [0, 0, 0, 0],           # 10 free           black
     [128, 128, 128, 255],   # 11
+    [211, 211, 211, 255],   # 12 reserved       gray
+    [120, 200, 255, 255],   # 13 reserved       light blue
+    [255, 220, 230, 255],   # 14 reserved       light pink
+    [120, 200, 255, 255],   # 15 reserved       light orange
+    [255, 100, 100, 255],   # 16 reserved       light red
+    [255, 245, 190, 255],   # 17 reserved       light yellow
+    [100, 220, 100, 255],   # 18 reserved       light green
+    [255, 100, 255, 255],   # 19 reserved       light magenta
 ], dtype=np.float32)
 
 
-def _voxel_to_points(voxel: np.ndarray,
-                     occupancy_mask: np.ndarray,
-                     voxel_size: tuple[float, float, float]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def __voxel_to_points__(voxel: np.ndarray,
+                        occupancy_mask: np.ndarray,
+                        voxel_size: tuple[float, float, float]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
     Convert voxel data into a point cloud representation.
 
@@ -56,8 +68,8 @@ def _voxel_to_points(voxel: np.ndarray,
     return points, voxel[occupied_indices], occupied_indices
 
 
-def _voxel_profile(points: np.ndarray,
-                   voxel_size: tuple[float, float, float]) -> np.ndarray:
+def __voxel_profile__(points: np.ndarray,
+                      voxel_size: tuple[float, float, float]) -> np.ndarray:
     """
     Generate 3D bounding box profiles for each point/voxel center.
 
@@ -89,7 +101,7 @@ def _voxel_profile(points: np.ndarray,
     return np.hstack((centers, w_l_h, yaw))
 
 
-def _rotz(angle: float) -> np.ndarray:
+def __rotz__(angle: float) -> np.ndarray:
     """
     Compute a rotation matrix for rotation about the Z-axis by 'angle'.
 
@@ -108,9 +120,9 @@ def _rotz(angle: float) -> np.ndarray:
     ])
 
 
-def _compute_box_3d(center: np.ndarray,
-                    size: np.ndarray,
-                    heading_angle: np.ndarray) -> np.ndarray:
+def __compute_box_3d__(center: np.ndarray,
+                       size: np.ndarray,
+                       heading_angle: np.ndarray) -> np.ndarray:
     """
     Compute 3D bounding box corners given center, box size, and heading angle.
 
@@ -155,7 +167,7 @@ def _compute_box_3d(center: np.ndarray,
     return corners_3d
 
 
-def _generate_ego_car() -> np.ndarray:
+def __generate_ego_car__() -> np.ndarray:
     """
     Generate a voxelized representation of the ego car in local space.
 
@@ -183,8 +195,8 @@ def _generate_ego_car() -> np.ndarray:
     return np.hstack((ego_point_y, ego_point_x, ego_point_z))
 
 
-def _place_ego_car_at_position(ego_points: np.ndarray,
-                               map_center: np.ndarray) -> np.ndarray:
+def __place_ego_car_at_position__(ego_points: np.ndarray,
+                                  map_center: np.ndarray) -> np.ndarray:
     """
     Move ego car points so that it is placed at 'map_center'.
 
@@ -241,13 +253,13 @@ def CreateOccHandle(occ: np.ndarray,
 
     # Convert voxel to points
     colors = COLOR_MAP / 255.0
-    points, labels, _ = _voxel_to_points(occ, voxel_mask, VOXEL_SIZE)
+    points, labels, _ = __voxel_to_points__(occ, voxel_mask, VOXEL_SIZE)
     color_indices = labels % len(colors)
     point_colors = colors[color_indices]
 
     # Prepare bounding boxes (if voxelize is True)
-    bboxes = _voxel_profile(points, VOXEL_SIZE)
-    bbox_corners = _compute_box_3d(bboxes[:, 0:3],
+    bboxes = __voxel_profile__(points, VOXEL_SIZE)
+    bbox_corners = __compute_box_3d__(bboxes[:, 0:3],
                                    bboxes[:, 3:6],
                                    bboxes[:, 6:7])
     corner_indices_base = np.arange(0, bbox_corners.shape[0] * 8, 8)
@@ -333,13 +345,12 @@ def AddCenterEgoToVisHandle(occ: np.ndarray,
     map_center = np.array(occ.shape) * np.array(VOXEL_SIZE) / 2.0
     map_center[2] -= 1.2  # Adjust for 'floor' offset
 
-    ego_points = _generate_ego_car()
-    ego_points = _place_ego_car_at_position(ego_points, map_center)
+    ego_points = __generate_ego_car__()
+    ego_points = __place_ego_car_at_position__(ego_points, map_center)
 
     ego_pcd = o3d.geometry.PointCloud()
     ego_pcd.points = o3d.utility.Vector3dVector(ego_points)
     vis_handle.add_geometry(ego_pcd)
-
 
 def VisualizeOcc(occ: np.ndarray,
                  free_label: int = FREE_LABEL,
@@ -409,6 +420,10 @@ def VisualizeOccFlowFile(file_path: str, free_label: int = FREE_LABEL) -> o3d.vi
     voxel_label = data['occ_label']
     occ_flow = data['occ_flow_forward']
 
+    # new_label = np.ones_like(voxel_label) * free_label
+    # new_label[:, :, 2:14] = voxel_label[:, :, 4:]
+
+
     vis_handle = CreateOccHandle(voxel_label, free_label)
     AddFlowToVisHandle(vis_handle, occ_flow)
     AddCenterEgoToVisHandle(voxel_label, vis_handle)
@@ -417,10 +432,14 @@ def VisualizeOccFlowFile(file_path: str, free_label: int = FREE_LABEL) -> o3d.vi
     vis_handle.update_renderer()
     return vis_handle
 
+def RotateO3DCamera(viz_handle, camera_json_path):
+    ctr = viz_handle.get_view_control()
+    parameters = o3d.io.read_pinhole_camera_parameters(camera_json_path)
+    ctr.convert_from_pinhole_camera_parameters(parameters)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Visualize 3D Occupancy and Flow data.")
-    parser.add_argument('--file_path', type=str, required=True,
+    parser.add_argument('--file_path', type=str, default='example/COHFF-val5/2021_08_18_19_48_05/1045/000068.npz',
                         help="Path to the .npz file containing 'occ_label' and 'occ_flow_forward'.")
     args = parser.parse_args()
 

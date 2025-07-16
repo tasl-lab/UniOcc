@@ -129,8 +129,8 @@ datasets
 - `YYY.npz`: A NumPy file containing the following data for a single time step.
   - `occ_label`: A 3D occupancy grid (L x W x H) with semantic labels.
   - `occ_mask_camera`: A 3D grid (L x W x H) with binary values with `1` indicating the voxel is in the camera FOV and `0` otherwise.
-  - `occ_flow_forward`: A 3D flow field (L x W x H x 3) with voxel flow vectors pointing to each voxel's next frame coordinate. In the last frame, flow is 0.
-  - `occ_flow_backward`: A 3D flow field (L x W x H x 3) with voxel flow vectors pointing to each voxel's previous frame coordinate. In the first frame, flow is 0.
+  - `occ_flow_forward`: A 3D flow field (L x W x H x 3) with voxel flow vectors pointing to each voxel's next frame coordinate. In the last frame, flow is 0. The unit of the flow is num_voxels.
+  - `occ_flow_backward`: A 3D flow field (L x W x H x 3) with voxel flow vectors pointing to each voxel's previous frame coordinate. In the first frame, flow is 0. The unit of the flow is num_voxels.
   - `ego_to_world_transformation`: A 4x4 transformation matrix from the ego vehicle to the world coordinate system.
   - `cameras`: A list of camera objects with intrinsic and extrinsic parameters.
     - `name`: The camera name (i.e. CAM_FRONT in nuScenes).
@@ -155,7 +155,7 @@ datasets
 You can visualize the dataset using the provided `viz.py` script. For example:
 
 ```shell
-python viz.py --file_path datasets/NuScenes-via-Occ3D-2Hz-mini/scene-0061/0.npz
+python uniocc_viz.py --file_path datasets/NuScenes-via-Occ3D-2Hz-mini/scene-0061/0.npz
 ```
 
 In this script, we also provide the API to visualize any 3D occupancy grid, with or without a flow field.
@@ -224,6 +224,48 @@ dataset = torch.utils.data.ConcatDataset([dataset_carla_mini, dataset_nusc_mini,
 ```
 ---
 
+## Occupancy Space Localization, Segmentation, Voxel Alignment, Tracking
+
+In `uniocc_utils.py`, we provide a set of utility functions for occupancy space localization, segmentation, voxel alignment, and tracking. These functions are designed to work with the voxelized occupancy grids and can be used for various tasks such as object tracking, segmentation, and motion estimation.
+
+| **Function**                                | **Description**                                                                                                                              |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VoxelToCorners`                            | Converts voxel indices to 3D bounding-box corner coordinates for spatial visualization and geometry computations.                            |
+| `OccFrameToEgoFrame` / `EgoFrameToOccFrame` | Transforms voxel coordinates between occupancy grid space and the ego-centric coordinate frame using voxel resolution and ego center offset. |
+| `AlignToCentroid`                           | Recenters voxel coordinates by subtracting their centroid, aligning the shape around the origin.                                             |
+| `RasterizeCoordsToGrid`                     | Converts a list of voxel coordinates into a binary 3D occupancy grid of specified dimensions.                                                |
+| `Compute3DBBoxIoU`                          | Approximates 3D IoU by computing overlap between 2D rotated bounding boxes and comparing height extents.                                     |
+| `AlignWithPCA`                              | Rotates voxel point clouds to align with principal axes using PCA; supports alignment with a reference PCA basis.                            |
+| `ComputeGridIoU`                            | Calculates voxel-wise binary IoU between two occupancy grids of identical shape.                                                             |
+| `SegmentVoxels`                             | Performs 3D connected-component labeling (CCL) on an occupancy grid, with filtering by minimum voxel count.                                  |
+| `EstimateEgoMotionFromFlows`                | Estimates ego-motion from voxel flow fields over time by extracting static voxels and applying RANSAC-based rigid transform fitting.         |
+| `AccumulateTransformations`                 | Composes a sequence of frame-to-frame transformation matrices into global poses over time.                                                   |
+| `TrackOccObjects`                           | Tracks objects across frames using voxel flows and estimated ego-motion, returning per-object trajectories and voxel groupings.              |
+| `BipartiteMatch`                            | Solves the optimal assignment problem (Hungarian algorithm) to associate predicted and reference objects based on a cost/score matrix.       |
+
+## Visualization API
+
+In `uniocc_viz.py`, we provide a set of visualization functions to render occupancy grids, flow fields, and camera images in 3D using Open3D. These functions can be used to visualize occupancy grids, flow vectors, and the ego vehicle model in a 3D scene.
+
+| **Function**                    | **Description**                                                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `__voxel_to_points__`           | Converts a 3D voxel array with a boolean occupancy mask into 3D point cloud coordinates, their values, and indices. |
+| `__voxel_profile__`             | Creates bounding box profiles for each voxel as `[x, y, z, w, l, h, yaw]` for rendering.                            |
+| `__rotz__`                      | Computes a Z-axis rotation matrix given an angle in radians.                                                        |
+| `__compute_box_3d__`            | Calculates 8-corner 3D box coordinates from voxel centers, dimensions, and yaw angles.                              |
+| `__generate_ego_car__`          | Produces a voxelized point cloud representation of the ego vehicle centered at the origin.                          |
+| `__place_ego_car_at_position__` | Translates ego vehicle voxels to a specified center location in the scene.                                          |
+| `FillRoadInOcc`                 | Ensures the bottom-most slice of the occupancy grid contains labeled road voxels for consistent visualization.      |
+| `CreateOccHandle`               | Builds a full Open3D visualizer, rendering occupancy grids with color and optional bounding boxes.                  |
+| `AddFlowToVisHandle`            | Draws flow vectors on the Open3D visualizer as red line segments for motion inspection.                             |
+| `AddCenterEgoToVisHandle`       | Adds the ego vehicle model to the visualizer at the center of the occupancy scene.                                  |
+| `VisualizeOcc`                  | Creates a visualizer for a static occupancy grid and optionally adds the ego vehicle.                               |
+| `VisualizeOccFlow`              | Visualizes both occupancy and voxel-level flow vectors in 3D, with optional ego car rendering.                      |
+| `VisualizeOccFlowFile`          | Loads `.npz` files containing occupancy and flow data, and visualizes them together.                                |
+| `RotateO3DCamera`               | Loads Open3D camera parameters from a JSON file and applies them to the current visualizer view.                    |
+
+
+
 ## 📏 Evaluation 
 
 Additional dependencies:
@@ -233,7 +275,7 @@ pip install shapely matplotlib scikit-learn pickle
 
 Demo (needs a sample dataset in `datasets/`):
 ```shell
-python eval.py
+python uniocc_eval.py
 ```
 
 We provide these evaluation APIs, as described in our paper.
@@ -243,7 +285,7 @@ We provide these evaluation APIs, as described in our paper.
 |-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `FindGMMForCategory` | Fits the best Gaussian-Mixture Model (GMM) to all length-width-height triples of a chosen class, creating a “realism” prior for that object category.               |
 | `ComputeObjectLikelihoods` | Segments each object in a binary occupancy grid and scores its bounding-box dimensions against the pretrained GMM, returning plausibility probabilities and counts. |
-| `ComputeTemporalShapeConsistency` | Tracks every object across frames using voxel flows, aligns shapes, and reports the mean IoU of consecutive shapes, higher = smoother temporal geometry.            |
+| `ComputeTemporalShapeConsistencyByTracking` | Tracks every object across frames using voxel flows, aligns shapes, and reports the mean IoU of consecutive shapes, higher = smoother temporal geometry.            |
 | `ComputeStaticConsistency` | Warps static voxels from frame *t* to *t + 1* via ego motion and measures how well they overlap, giving an IoU-style score for background stability.                |
 | `ComputeIoU` | Computes the standard intersection-over-union between two mono-label occupancy grids while ignoring a specified “free-space” label.                                 |
 | `ComputeIoUForCategory` | Same as `ComputeIoU`, but restricted to voxels of a single semantic class, enabling per-category performance evaluation.                                            |
@@ -255,6 +297,7 @@ We provide these evaluation APIs, as described in our paper.
 - [x] Release the dataset API
 - [x] Release the visualization script
 - [x] Release the evaluation scripts
+- [x] Release the occupancy segmentation, localization, tracking scripts
 - [ ] Release data generation scripts
 
 
