@@ -44,7 +44,7 @@ We simplify our benchmark so you only need:
 
 - Python 3.9 or higher
   ```shell
-  pip install torch torchvision pillow tqdm numpy open3d
+  pip install torch torchvision pillow tqdm numpy open3d shapely matplotlib scikit-learn pickle
   ```
 - Huggingface
   ```shell
@@ -275,12 +275,12 @@ In `uniocc_viz.py`, we provide a set of visualization functions to render occupa
 | `ComputeFlowsForBackground`    | Computes static scene flow due to ego-motion for voxels labeled as background (e.g., road, terrain).                                  |
 | `ComputeFlowsForOccupancyGrid` | Combines dynamic and static voxel-level flow to produce a complete scene flow grid.                                                   |
 
-## 📏 Evaluation 
-
-Additional dependencies:
+Run the script directly to compute and verify flow fields on sample data from the UniOcc dataset:
 ```shell
-pip install shapely matplotlib scikit-learn pickle
+python uniocc_flow_gen.py
 ```
+
+## 📏 Evaluation 
 
 Demo (needs a sample dataset in `datasets/`):
 ```shell
