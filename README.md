@@ -224,7 +224,7 @@ dataset = torch.utils.data.ConcatDataset([dataset_carla_mini, dataset_nusc_mini,
 ```
 ---
 
-## Occupancy Space Localization, Segmentation, Voxel Alignment, Tracking
+## 🚘 Occupancy Space Localization, Segmentation, Voxel Alignment, Tracking
 
 In `uniocc_utils.py`, we provide a set of utility functions for occupancy space localization, segmentation, voxel alignment, and tracking. These functions are designed to work with the voxelized occupancy grids and can be used for various tasks such as object tracking, segmentation, and motion estimation.
 
@@ -244,7 +244,7 @@ In `uniocc_utils.py`, we provide a set of utility functions for occupancy space 
 | `TrackOccObjects`                           | Tracks objects across frames using voxel flows and estimated ego-motion, returning per-object trajectories and voxel groupings.              |
 | `BipartiteMatch`                            | Solves the optimal assignment problem (Hungarian algorithm) to associate predicted and reference objects based on a cost/score matrix.       |
 
-## Visualization API
+## 👀 Visualization API
 
 In `uniocc_viz.py`, we provide a set of visualization functions to render occupancy grids, flow fields, and camera images in 3D using Open3D. These functions can be used to visualize occupancy grids, flow vectors, and the ego vehicle model in a 3D scene.
 
@@ -265,7 +265,15 @@ In `uniocc_viz.py`, we provide a set of visualization functions to render occupa
 | `VisualizeOccFlowFile`          | Loads `.npz` files containing occupancy and flow data, and visualizes them together.                                |
 | `RotateO3DCamera`               | Loads Open3D camera parameters from a JSON file and applies them to the current visualizer view.                    |
 
+## 🌀 Voxel Flow Computation
 
+`uniocc_flow_gen.py` provides utility functions for computing voxel-level flow fields from occupancy grids and object annotations.
+
+| Function                       | Description                                                                                                                           |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `ComputeFlowsForObjects`       | Computes flow vectors for all foreground (dynamic) objects by transforming their voxels from current to next frame using SE(3) poses. |
+| `ComputeFlowsForBackground`    | Computes static scene flow due to ego-motion for voxels labeled as background (e.g., road, terrain).                                  |
+| `ComputeFlowsForOccupancyGrid` | Combines dynamic and static voxel-level flow to produce a complete scene flow grid.                                                   |
 
 ## 📏 Evaluation 
 
