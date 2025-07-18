@@ -299,6 +299,7 @@ We provide these evaluation APIs, as described in our paper.
 | `ComputeIoU` | Computes the standard intersection-over-union between two mono-label occupancy grids while ignoring a specified “free-space” label.                                 |
 | `ComputeIoUForCategory` | Same as `ComputeIoU`, but restricted to voxels of a single semantic class, enabling per-category performance evaluation.                                            |
 
+---
 ## Checklist
 
 - [x] Release non-cooperative datasets
@@ -311,6 +312,10 @@ We provide these evaluation APIs, as described in our paper.
 
 
 ---
+## Change History
+- **2025-07-17**: Fix bug in nuScenes datasets where `token` is incorrectly set to annotation token but should be instance token. We changed the `token` to the instance token in the `annotations` field of the occupancy grid. This change is backward compatible, as we also provide the original annotation token in the `annotation_token` field.
+
+
 ## Citation
 
 If you find this work useful, please consider citing our paper:
