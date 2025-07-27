@@ -321,10 +321,10 @@ We provide these evaluation APIs, as described in our paper.
 If you find this work useful, please consider citing our paper:
 
 ```bibtex
-@article{wang2025uniocc,
-  title={Uniocc: A unified benchmark for occupancy forecasting and prediction in autonomous driving},
+@inproceedings{wang2025uniocc,
+  title={UniOcc: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving},
   author={Wang, Yuping and Huang, Xiangyu and Sun, Xiaokang and Yan, Mingxuan and Xing, Shuo and Tu, Zhengzhong and Li, Jiachen},
-  journal={IEEE/CVF International Conference on Computer Vision (ICCV)},
+  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
   year={2025}
 }
 ```
