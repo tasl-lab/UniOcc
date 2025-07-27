@@ -325,6 +325,7 @@ If you find this work useful, please consider citing our paper:
   title={UniOcc: A Unified Benchmark for Occupancy Forecasting and Prediction in Autonomous Driving},
   author={Wang, Yuping and Huang, Xiangyu and Sun, Xiaokang and Yan, Mingxuan and Xing, Shuo and Tu, Zhengzhong and Li, Jiachen},
   booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
-  year={2025}
+  year={2025},
+  publisher={IEEE}
 }
 ```
