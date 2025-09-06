@@ -10,6 +10,7 @@ from typing import List
 
 import numpy as np
 import shapely
+from matplotlib import pyplot as plt
 
 from scipy.ndimage import label
 from scipy.optimize import linear_sum_assignment
@@ -521,7 +522,8 @@ def TrackOccObjects(binary_occs,
         Flow fields at each frame.
     ego_cum_motion_transformations : np.ndarray, shape (T, 4, 4)
         Cumulative ego motion transformations since the first frame.
-        It can be from ego_to_world, or from EstimateEgoMotionFromFlows.
+        It can come from ego_to_world, or from EstimateEgoMotionFromFlows (in which
+        the world origin is ego's t=0s position).
     threshold : float
         Distance threshold in meters for centroid-based association. This
         value can be eye-balled from the small values in the cost_matrix below.
@@ -544,6 +546,7 @@ def TrackOccObjects(binary_occs,
     current_id = 1
 
     prev_centroids = []
+    pred_centroids = []
     prev_ids = []
 
     # MAIN TRACKING LOOP
@@ -554,8 +557,8 @@ def TrackOccObjects(binary_occs,
         # Segment objects
         labeled, num_obj = SegmentVoxels(binary_occ)
 
-        centroids_t = []
-        predicted_tplus1 = []
+        curr_centroids = []
+        next_centroids = []
 
         for obj_idx in range(1, labeled.max()+1):
             obj_mask = (labeled == obj_idx)
@@ -564,7 +567,7 @@ def TrackOccObjects(binary_occs,
             curr_obj_voxels = np.argwhere(obj_mask)
             curr_obj_coords_ego_curr = OccFrameToEgoFrame(curr_obj_voxels).mean(axis=0)
 
-            # Predict next centroid if we have flow
+            # Predict next centroid with flow
             obj_flow = flow[obj_mask]
             pred_obj_voxels = curr_obj_voxels + obj_flow
             pred_obj_coords_ego_next = OccFrameToEgoFrame(pred_obj_voxels).mean(axis=0)
@@ -575,20 +578,23 @@ def TrackOccObjects(binary_occs,
 
             # Predict next centroid in world coordinates by compensating for ego motion.
             pred_obj_coords_ego_next = np.array([*pred_obj_coords_ego_next, 1.0])
-            pred_obj_coords_world = ego_cum_motion_transformations[t + 1].dot(pred_obj_coords_ego_next)[:3] if t < T - 1 else pred_obj_coords_ego_next[:3]
+            pred_obj_coords_world = ego_cum_motion_transformations[t+1].dot(pred_obj_coords_ego_next)[:3] if t < T - 1 else pred_obj_coords_ego_next[:3]
 
             # Save the results.
-            centroids_t.append(curr_obj_coords_world)
-            predicted_tplus1.append(pred_obj_coords_world)
+            curr_centroids.append(curr_obj_coords_world)
+            next_centroids.append(pred_obj_coords_world)
 
-        if t == 0:
+        if len(pred_centroids) == 0:
+            print(f"No previous predictions, initializing at frame {t}")
+
             # Assign new IDs
-            these_ids = list(range(current_id, current_id + len(centroids_t)))
-            current_id += len(centroids_t)
+            these_ids = list(range(current_id, current_id + len(curr_centroids)))
+            current_id += len(curr_centroids)
             # Initialize trajectories
             for idx, cid in enumerate(these_ids):
-                object_trajectories[cid]= {t: centroids_t[idx]}
-            prev_centroids = predicted_tplus1
+                object_trajectories[cid]= {t: curr_centroids[idx]}
+            prev_centroids = curr_centroids.copy()
+            pred_centroids = next_centroids.copy()
             prev_ids = these_ids
 
             id_grid = labeled.copy()
@@ -596,9 +602,13 @@ def TrackOccObjects(binary_occs,
         else:
             # [DEBUG]
             # prev_dots = np.array(prev_centroids)
-            # curr_dots = np.array(centroids_t)
+            # curr_dots = np.array(curr_centroids)
+            # pred_dots = np.array(pred_centroids)
+            # next_dots = np.array(next_centroids)
             # plt.plot(prev_dots[:, 0], prev_dots[:, 1], 'ro', label='Previous')
             # plt.plot(curr_dots[:, 0], curr_dots[:, 1], 'bo', label='Current')
+            # plt.plot(pred_dots[:, 0], pred_dots[:, 1], 'y*', label='Predicted')
+            # plt.plot(next_dots[:, 0], next_dots[:, 1], 'g*', label='Next Predicted')
             # plt.title(f"Frame {t}")
             # plt.xlabel("X")
             # plt.ylabel("Y")
@@ -606,14 +616,13 @@ def TrackOccObjects(binary_occs,
             # plt.show()
 
             # Edge case: if no objects detected in the current frame.
-            if len(centroids_t) == 0:
+            if len(curr_centroids) == 0:
                 all_id_grids.append(np.zeros_like(labeled))
-                prev_centroids = []
                 prev_ids = []
                 continue
 
             # Hungarian-based association
-            cost_matrix = cdist(np.array(prev_centroids), np.array(centroids_t), 'euclidean')
+            cost_matrix = cdist(np.array(pred_centroids), np.array(curr_centroids), 'euclidean')
             if np.any(np.isnan(cost_matrix)):
                 print(f"NaN detected in cost matrix at frame {t}. Skipping frame.")
             row_ind, col_ind = linear_sum_assignment(cost_matrix)
@@ -625,13 +634,13 @@ def TrackOccObjects(binary_occs,
                 if cost_matrix[r, c] < threshold:
                     matched_t[c] = prev_ids[r]
                     matched_ids[c] = prev_ids[r]
-                    object_trajectories[prev_ids[r]][t] = centroids_t[c]
+                    object_trajectories[prev_ids[r]][t] = curr_centroids[c]
 
             # Assign new IDs to unmatched
-            for i in range(len(centroids_t)):
+            for i in range(len(curr_centroids)):
                 if i not in matched_ids:
                     matched_t[i] = current_id
-                    object_trajectories[current_id] = {t: centroids_t[i]}
+                    object_trajectories[current_id] = {t: curr_centroids[i]}
                     current_id += 1
 
             # Build ID grid
@@ -649,7 +658,8 @@ def TrackOccObjects(binary_occs,
             all_id_grids.append(id_grid)
 
             # Update for next iteration
-            prev_centroids = predicted_tplus1.copy()
+            prev_centroids = curr_centroids.copy()
+            pred_centroids = next_centroids.copy()
             prev_ids = matched_t.copy()
 
     # Get the voxels for the tracked objects.

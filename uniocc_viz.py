@@ -443,4 +443,6 @@ if __name__ == '__main__':
                         help="Path to the .npz file containing 'occ_label' and 'occ_flow_forward'.")
     args = parser.parse_args()
 
+    print("Press p to save camera position.")
+
     VisualizeOccFlowFile(args.file_path).run()
