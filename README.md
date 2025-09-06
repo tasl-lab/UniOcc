@@ -94,11 +94,8 @@ To download each dataset, use the following command (recommend you to download o
 
 ```shell
 huggingface-cli download tasl-lab/uniocc --include "NuScenes-via-Occ3D-2Hz-mini*" --repo-type dataset --local-dir ./datasets
-hf download tasl-lab/uniocc --include "Waymo-via-Occ3D-10Hz-mini*" --repo-type dataset --local-dir ./datasets
 huggingface-cli download tasl-lab/uniocc --include "Carla-2Hz-train*" --repo-type dataset --local-dir ./datasets
 ...
-
-    hf download tasl-lab/uniocc --revision v1.0 --local-dir my_whisper_model
 ```
 
 ---
